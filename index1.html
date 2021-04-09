@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+  <title>My JSP 'index.jsp' starting page</title>
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+  <meta http-equiv="description" content="This is my page">
+  <!--
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	-->
+</head>
+
+<body>
+  <h2 align="center" style="margin-top: 30px;font-family: 微软雅黑;color: red">第一步:证书用户绑定</h2>
+  <OBJECT id="obj" classid="clsid:3BC3C868-95B5-47ED-8686-E0E3E94EF366"></OBJECT>
+  <!-- 注册object控件，用于在脚本中获取签章图片 -->
+  <div align="center" id="div1">
+    <table Width="957" border="0" align="center" cellpadding="0" cellspacing="0">
+      <form method="post" id="LoginForm" name="LoginForm">
+        <tr>
+          <td align="center">选择证书:</td>
+          <td>
+            <select id="UserList" name="UserList" style="width: 200px"></select>
+          </td>
+        </tr>
+        <tr>
+          <td align="center">证书用户唯一标示符:</td>
+          <td>
+            <input type="text" id="username" name="username" size="30" maxlength="160"></input>
+          </td>
+        </tr>
+      </form>
+      <tr>
+        <td align="center">电子签章值:</td>
+        <td>
+          <input id="keypicvalue" name="keypicvalue" size="30"></input>
+        </td>
+      </tr>
+      <tr>
+        <td align="center">签章图片:</td>
+        <td>
+          <img id="keypic" height=20 src="" width=64></img>
+        </td>
+      </tr>
+      <tr>
+        <td align="center">
+          <input type="button" value="获取证书有效期" onclick="getCertValidDate()"></input>
+        </td>
+        <td>
+          <textarea id="CertValidDate"></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td align="center">证书密码:</td>
+        <td>
+          <input name="UserPwd" type="password" id="UserPwd" size="32" maxlength="16">
+          <input type="text" id="name" name="username" size="30" maxlength="160" value=""></input>
+        </td>
+      </tr>
+      <tr>
+        <td align="center"><button onclick="getUserCertID();">读取证书用户唯一标示</button></td>
+        <td align="center"><button onclick="testGetKeyPic();">读取电子签章</button></td>
+        <td align="center"><button onclick="changePws();">修改密码</button></td>
+      </tr>
+    </table>
+    <a href="./login.html">进入登录页面</a>
+  </div>
+  <script type="text/javascript">
+    var strUserCertID = '998000100350915/5901202012019919'
+      //获取证书用户唯一标示符
+    function getUserCertID() {
+      strUserCertID = LoginForm.UserList.value;
+      GetSignCert(strUserCertID, function(cert) {
+        GetExtCertInfoByOID(cert.retVal, "1.2.156.112562.2.1.1.1", function(username) {
+          console.log('username:' + JSON.stringify(username))
+          LoginForm.username.value = username.retVal;
+          var _name = document.getElementById('name')
+          _name.value = username.retVal;
+        });
+      });
+    }
+
+    //读取电子签章的方法
+    function testGetKeyPic() {
+      //根据上面注册的obj控件调用GetPic这个接口获得签章值
+      /* var pic = obj.GetPic(); 
+      console.log(pic); */
+      GetPic(strUserCertID, function(str) {
+        console.log(str);
+        document.getElementById("keypicvalue").value = str.retVal;
+        keypic.src = "data:image/gif;base64," + str.retVal + "";
+      });
+    }
+
+    //获取证书有效期函数
+    function getCertValidDate() {
+      //通过证书序列号，获得用户证书
+      console.log(LoginForm.UserList.value)
+      GetSignCert(strUserCertID, function(cert) {
+        GetCertBasicinfo(cert.retVal, 11, function(sts) {
+          var startDate = sts.retVal;
+          var startDated = startDate.substring(0, 4) + "/" + startDate.substring(4, 6) + "/" + startDate.substring(6, 8);
+          GetCertBasicinfo(cert.retVal, 12, function(sta) {
+            var endDate = sta.retVal;
+            var endDated = endDate.substring(0, 4) + "/" + endDate.substring(4, 6) + "/" + endDate.substring(6, 8);
+            var validDate = "证书的有效期为:" + startDated + "到" + endDated;
+            document.getElementById("CertValidDate").value = validDate;
+          });
+        });
+      });
+    }
+
+    // 修改密码
+    function changePws() {
+      console.log(strUserCertID)
+      VerifyUserPIN(strUserCertID, '111111', (ret) => {
+        console.log('ret——' + JSON.stringify(ret))
+        if (ret.retVal) {
+          SignedData(strUserCertID, '111', (res) => {
+            console.log(res) // n44C9ZHJFWByPFhJk4xdIgay6s8LjXFI MEUCIQCpTA8zC/gWoUIHDrNvASJlYsLygHhLKOaJu2eNr1pZfQIgWf4wrZbxkhoWGQ4rd48g4XGYVxr3O3sK8GlouiZx3l4=
+          })
+        }
+      })
+    }
+  </script>
+</body>
+
+<!-- 页面加载时更新证书下拉列表内容 -->
+<SCRIPT type="text/javascript" src="XTXSAB.js" charset="UTF-8"></SCRIPT>
+<SCRIPT LANGUAGE=JAVASCRIPT>
+  SetUserCertList("LoginForm.UserList", CERT_TYPE_HARD);
+</SCRIPT>
+<script>
+</script>
+
+</html>

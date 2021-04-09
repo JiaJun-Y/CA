@@ -5,11 +5,108 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>CA</title>
+  <link rel="stylesheet" href="./css/normalize.css">
+  <link rel="stylesheet" href="./css/index.css">
+  <link rel="stylesheet" href="./css/jquery.step.css">
 </head>
 
 <body>
+  <div class="ca-wapper">
+
+
+    <div class="main">
+      <div id="step"></div>
+      <!-- <div class="btns">
+        <button id="prevBtn">上一步</button>
+        <button id="nextBtn">下一步</button>
+        <button id="btn1">跳到第二步</button>
+        <button id="btn2">跳到第三步</button>
+      </div> -->
+      <div class="info" id="info-child-0">
+        <ul>
+          <li>
+            <p>是否安装证书助手？</p>
+            <span></span>
+          </li>
+          <li>
+            <p>检测证书是否存在？</p>
+            <span></span>
+          </li>
+          <li>
+            <p>检测websocket连接是否正常？</p>
+            <span></span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="info" id="info-child-1">
+        <!-- <ul class="reg_ul">
+          <form method="post" id="LoginForm" name="LoginForm">
+            <li>
+              <span>选择证书：</span>
+              <select id="UserList" name="UserList"></select>
+              <span class="user_hint"></span>
+            </li>
+            <li>
+              <span>电子签章值：</span>
+              <input type="password" name="" value="" placeholder="6-16位密码" class="reg_password">
+              <span class="password_hint"></span>
+            </li>
+            <li>
+              <span>签章图片：</span>
+            </li>
+            <li>
+              <span>用户唯一标识：</span>
+              <input type="password" name="" value="" placeholder="确认密码" class="reg_confirm">
+              <span class="confirm_hint"></span>
+            </li>
+            <li>
+              <span>证书有效期：</span>
+              <input type="text" name="" value="" placeholder="邮箱" class="reg_email">
+              <span class="email_hint"></span>
+            </li>
+            <li>
+              <span>签名数据：</span>
+              <input type="email" name="" value="" placeholder="手机号" class="reg_mobile">
+              <span class="mobile_hint"></span>
+            </li>
+            <li>
+              <span>证书密码：</span>
+              <input type="text" name="" value="" placeholder="邮箱" class="reg_email">
+              <span class="email_hint"></span>
+            </li>
+            <li>
+              <button type="button" name="button" class="red_button">签名</button>
+            </li>
+          </form>
+        </ul> -->
+      </div>
+
+      <div class="info" id="info-child-2">
+        结果
+      </div>
+
+    </div>
+  </div>
+
 
 </body>
+<script src="http://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+<script src="./js/jquery.step.min.js"></script>
+<script src="./js/XTXSAB.js"></script>
+<script src="./js/index.js"></script>
+<script type="text/javascript">
+  var $step = $("#step");
+  var $index = $("#index");
+
+  $step.step({
+    index: 0,
+    time: 500,
+    title: ["检测环境", "数字签名", "结果"]
+  });
+
+  $index.text($step.getIndex());
+</script>
 
 </html>
